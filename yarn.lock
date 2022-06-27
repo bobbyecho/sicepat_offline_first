@@ -1318,22 +1318,10 @@
     "@expo/config-plugins" "^4.0.3"
     stacktrace-js "^2.0.0"
 
-"@react-native-firebase/messaging@12.9.3":
+"@react-native-firebase/firestore@12.9.3":
   version "12.9.3"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-12.9.3.tgz#d89cb95c1e90ccdf6eeac8a9b7e895bee2aa9a36"
-  integrity sha512-5xO6WuTmm9qfaRaTaG0jRiMr2hPzgl6IMJYtZ48/xXYLe38gxXyOd14w9f+f4yXlJftqcPIE3thLeNawMfdWBA==
-
-"@react-native-firebase/perf@12.9.3":
-  version "12.9.3"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/perf/-/perf-12.9.3.tgz#b4aba057d533e21e5a002b25bf0b6430298b69dc"
-  integrity sha512-/R7cvlLpsUOxI7gpAf+FLYkdrDq3xfrqfu5u52BOXg37xOkQy+1XDEf223eqzifQtys3j4Jb8bJ6jtv7B6/jCA==
-  dependencies:
-    "@expo/config-plugins" "^4.0.3"
-
-"@react-native-firebase/remote-config@12.9.3":
-  version "12.9.3"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/remote-config/-/remote-config-12.9.3.tgz#bd9cb78f3dac37090aea7dbfbf395e17b50a0207"
-  integrity sha512-fMnnDQaz92DU2xRfHOeIsPXeRJzngpwI7ZFboia+FBQl+/utOoBeEGqfkseyWZlB9haFMzWgvwmZ0ia70FWe2A==
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-12.9.3.tgz#dff44698f0e38b1be4030151e16331863c7d5668"
+  integrity sha512-vz7gPbb7eFxjKTRTe/XFsFq+feL1ngg8ukKNzxs/X7dj9SZ9iuOeqzLOFBBl6xcUS2adKkp8pfIIN9JeWUZmLA==
 
 "@react-native/assets@1.0.0":
   version "1.0.0"
