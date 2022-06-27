@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "579278732703",
+    "project_id": "sicepat-offline-first",
+    "storage_bucket": "sicepat-offline-first.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579278732703:android:a5d6798728cedf49b5d1aa",
+        "android_client_info": {
+          "package_name": "com.sicepat.offline.first"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579278732703-qoete0pd011latnv8ajhdsm2u6hdhmnu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCks-KOL6rYw0kn4pQsKMFBh0r-4WLkdfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579278732703-qoete0pd011latnv8ajhdsm2u6hdhmnu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
