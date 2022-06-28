@@ -7,98 +7,90 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import {
-  SafeAreaView,
+  Button,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
+  TextInput,
   View,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {v4 as uuid} from 'uuid';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
-
-const App: () => Node = () => {
+const App = () => {
+  const [row, setRow] =  React.useState([])
+  const [name, setName] = React.useState('')
+  const [type, setType] = React.useState('')
+  const collectionRef = React.useRef(firestore().collection('offline')).current
 
   React.useEffect(() => {
-    const firestoreForDefaultApp = firestore.collection('offline').doc('pokeymon_sync').get()
+    collectionRef
+    .where('is_synced', '==', false).onSnapshot(querySnapshot => {
+        let snapshotData = []
 
-    console.log(firestoreForDefaultApp)
+        querySnapshot.forEach(documentSnapshot => {
+          snapshotData.push({
+            id: documentSnapshot.id,
+            ...documentSnapshot.data()
+          })
+        });
+
+        setRow(snapshotData);
+    })
   }, [])
 
-  const isDarkMode = useColorScheme() === 'dark';
+  const reset = () => {
+    setType('')
+    setName('')
+  }
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const onSubmit = () => {
+    collectionRef
+    .doc(uuid())
+    .set({
+      is_synced: false,
+      payload: {
+        name,
+        type
+      }
+    })
+    .then(() => {
+      console.log("pokemon added")
+    })
+
+    reset()
+  }
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+    <View>
+      {row.map((item) => {
+        return (
+          <View key={item.id} style={{margin: 10, padding: 10, borderWidth: 1, borderRadius: 4, borderColor: 'blue'}}>
+            <Text style={{color: 'black'}}>name: {item.payload.name}</Text>
+            <Text style={{color: 'black'}}>type: {item.payload.type}</Text>
+          </View>
+        )
+      })}
+
+
+      <View style={{padding: 20}}>
+        <TextInput value={name} onChangeText={setName} style={styles.txInput}/>
+        <TextInput value={type} onChangeText={setType} style={styles.txInput}/>
+        <Button title='add new pokemon' onPress={onSubmit}/>
+      </View>
+    </View>
+  )
 };
 
 const styles = StyleSheet.create({
+  txInput: {
+    height: 40,
+    borderColor: 'blue',
+    borderRadius: 4,
+    borderWidth: 1,
+    marginVertical: 5
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
