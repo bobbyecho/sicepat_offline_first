@@ -1,4 +1,4 @@
-package com.sicepat_offline_first.newarchitecture;
+package com.sicepat.offline.first.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.sicepat_offline_first.BuildConfig;
-import com.sicepat_offline_first.newarchitecture.components.MainComponentsRegistry;
-import com.sicepat_offline_first.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.sicepat.offline.first.BuildConfig;
+import com.sicepat.offline.first.newarchitecture.components.MainComponentsRegistry;
+import com.sicepat.offline.first.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

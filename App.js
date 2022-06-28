@@ -17,6 +17,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
 import {
   Colors,
@@ -53,6 +54,13 @@ const Section = ({children, title}): Node => {
 };
 
 const App: () => Node = () => {
+
+  React.useEffect(() => {
+    const firestoreForDefaultApp = firestore.collection('offline').doc('pokeymon_sync').get()
+
+    console.log(firestoreForDefaultApp)
+  }, [])
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {

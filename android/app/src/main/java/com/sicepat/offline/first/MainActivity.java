@@ -1,4 +1,4 @@
-package com.sicepat_offline_first;
+package com.sicepat.offline.first;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "sicepat_offline_first";
+    return "SiCepatOfflineFirst";
   }
 
   /**

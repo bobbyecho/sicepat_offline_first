@@ -1,4 +1,4 @@
-package com.sicepat_offline_first.newarchitecture.components;
+package com.sicepat.offline.first.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

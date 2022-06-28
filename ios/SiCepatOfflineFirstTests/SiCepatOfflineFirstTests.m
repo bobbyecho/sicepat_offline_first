@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface sicepat_offline_firstTests : XCTestCase
+@interface SiCepatOfflineFirstTests : XCTestCase
 
 @end
 
-@implementation sicepat_offline_firstTests
+@implementation SiCepatOfflineFirstTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {
