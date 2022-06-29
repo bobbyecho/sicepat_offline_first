@@ -9,7 +9,6 @@
 import React from 'react';
 import {
   Button,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -17,6 +16,8 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {v4 as uuid} from 'uuid';
+import { getPokemons } from './axios';
+import { mapper } from './mapper';
 
 const App = () => {
   const [row, setRow] =  React.useState([])
@@ -25,19 +26,42 @@ const App = () => {
   const collectionRef = React.useRef(firestore().collection('offline')).current
 
   React.useEffect(() => {
-    collectionRef
-    .where('is_synced', '==', false).onSnapshot(querySnapshot => {
+    async function fetchPokemon() {
+      const pokemons = await getPokemons();
+      if (pokemons.data) {
+        setRow((data) => {
+          return [
+            ...data,
+            ...pokemons.data
+          ]
+        })
+      }
+    }
+
+    async function fetchPokemonCached() {
+      collectionRef
+        .where('is_synced', '==', false).onSnapshot(querySnapshot => {
         let snapshotData = []
 
         querySnapshot.forEach(documentSnapshot => {
-          snapshotData.push({
-            id: documentSnapshot.id,
-            ...documentSnapshot.data()
-          })
+          snapshotData.push(mapper(documentSnapshot))
         });
 
-        setRow(snapshotData);
-    })
+        console.log(snapshotData)
+
+        setRow((data) => {
+          return [
+            ...data,
+            ...snapshotData
+          ]
+        })
+      })
+    }
+
+    Promise.all([
+      fetchPokemon(),
+      fetchPokemonCached()
+    ])
   }, [])
 
   const reset = () => {
@@ -67,8 +91,8 @@ const App = () => {
       {row.map((item) => {
         return (
           <View key={item.id} style={{margin: 10, padding: 10, borderWidth: 1, borderRadius: 4, borderColor: 'blue'}}>
-            <Text style={{color: 'black'}}>name: {item.payload.name}</Text>
-            <Text style={{color: 'black'}}>type: {item.payload.type}</Text>
+            <Text style={{color: 'black'}}>name: {item.name}</Text>
+            <Text style={{color: 'black'}}>type: {item.type}</Text>
           </View>
         )
       })}
