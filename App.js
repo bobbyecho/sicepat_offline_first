@@ -8,6 +8,7 @@
 
 import React from 'react';
 import {
+  Alert,
   Button,
   StyleSheet,
   Text,
@@ -18,21 +19,28 @@ import firestore from '@react-native-firebase/firestore';
 import {v4 as uuid} from 'uuid';
 import { getPokemons } from './axios';
 import { mapper } from './mapper';
+import { useNetwork } from './useNetwork';
 
 const App = () => {
   const [row, setRow] =  React.useState([])
   const [name, setName] = React.useState('')
   const [type, setType] = React.useState('')
   const collectionRef = React.useRef(firestore().collection('offline')).current
+  const { isOnline } = useNetwork()
 
   React.useEffect(() => {
     async function fetchPokemon() {
       const pokemons = await getPokemons();
       if (pokemons.data) {
+        const concatPokemonData = pokemons.data.map((pokemon) => ({
+          ...pokemon,
+          from: 'database'
+        }))
+
         setRow((data) => {
           return [
             ...data,
-            ...pokemons.data
+            ...concatPokemonData
           ]
         })
       }
@@ -44,7 +52,10 @@ const App = () => {
         let snapshotData = []
 
         querySnapshot.forEach(documentSnapshot => {
-          snapshotData.push(mapper(documentSnapshot))
+          snapshotData.push({
+            ...mapper(documentSnapshot),
+            from: 'firestore'
+          })
         });
 
         console.log(snapshotData)
@@ -52,7 +63,7 @@ const App = () => {
         setRow((data) => {
           return [
             ...data,
-            ...snapshotData
+            ...snapshotData, 
           ]
         })
       })
@@ -70,20 +81,24 @@ const App = () => {
   }
 
   const onSubmit = () => {
-    collectionRef
-    .doc(uuid())
-    .set({
-      is_synced: false,
-      payload: {
-        name,
-        type
-      }
-    })
-    .then(() => {
-      console.log("pokemon added")
-    })
-
-    reset()
+    if (!isOnline) {
+      collectionRef
+      .doc(uuid())
+      .set({
+        is_synced: false,
+        payload: {
+          name,
+          type
+        }
+      })
+      .then(() => {
+        console.log("pokemon added")
+      })
+  
+      reset()
+    } else {
+      Alert.alert('Online, ga bisa submit')
+    }
   }
 
   return (
@@ -93,6 +108,7 @@ const App = () => {
           <View key={item.id} style={{margin: 10, padding: 10, borderWidth: 1, borderRadius: 4, borderColor: 'blue'}}>
             <Text style={{color: 'black'}}>name: {item.name}</Text>
             <Text style={{color: 'black'}}>type: {item.type}</Text>
+            <Text style={{color: 'black'}}>from: {item.from}</Text>
           </View>
         )
       })}

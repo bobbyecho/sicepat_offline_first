@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^9.3.0",
     "@react-native-firebase/app": "12.9.3",
     "@react-native-firebase/firestore": "12.9.3",
     "axios": "^0.27.2",
