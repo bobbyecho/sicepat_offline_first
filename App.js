@@ -20,6 +20,9 @@ import {v4 as uuid} from 'uuid';
 import { getPokemons } from './axios';
 import { mapper } from './mapper';
 import { useNetwork } from './useNetwork';
+import BackgroundActions from 'react-native-background-actions';
+
+const sleep = (time) => new Promise((resolve) => setTimeout(() => resolve(), time));
 
 const App = () => {
   const [row, setRow] =  React.useState([])
@@ -34,7 +37,7 @@ const App = () => {
 
   const refresh = () => {
     setRow([])
-    
+
     async function fetchPokemon() {
       const pokemons = await getPokemons();
       if (pokemons.data) {
@@ -69,7 +72,7 @@ const App = () => {
         setRow((data) => {
           return [
             ...data,
-            ...snapshotData, 
+            ...snapshotData,
           ]
         })
       })
@@ -86,21 +89,66 @@ const App = () => {
     setName('')
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    await BackgroundActions.start(
+      async (taskData) => {
+          console.log('looping dulu 1', taskData)
+          const { delayInMs } = taskData;
+          // await new Promise( async (resolve) => {
+          //     for (let i = 0; BackgroundService.isRunning(); i++) {
+          //         console.log(i);
+          //         await sleep(delay);
+          //     }
+          // });
+          if (taskData) {
+              console.log('looping dulu')
+              while (BackgroundActions.isRunning()) {
+                if (isOnline) {
+                  console.log(collectionRef.doc(uuid()).get(), 'cache');
+                }
+                
+                collectionRef.doc(uuid).onSnapshot((snap) => {
+                  if (snap.metadata.fromCache) {
+                    BackgroundActions.stop();
+                  }
+                })
+                await sleep(delayInMs);
+              }
+          }
+      },
+      {
+          taskName: 'Online',
+          taskTitle: 'Offline test',
+          taskDesc: 'Sabar yaa, not synced',
+          taskIcon: {
+              name: 'ic_launcher',
+              type: 'mipmap'
+          },
+          // linkingURI: getUriScheme, // See Deep Linking for more info
+          parameters: {delayInMs: 200000}
+      }
+  );
     if (!isOnline) {
+      console.log(BackgroundActions, 'tee');
+      try{
+
+        
+      } catch (e) {
+        console.log('kontol tai', e)
+      }
       collectionRef
-      .doc(uuid())
-      .set({
-        is_synced: false,
-        payload: {
-          name,
-          type
-        }
-      })
-      .then(() => {
-        console.log("pokemon added")
-      })
-  
+          .doc(uuid())
+          .set({
+            is_synced: false,
+            payload: {
+              name,
+              type
+            }
+          })
+          .then(() => {
+            console.log("pokemon added")
+          })
+
       reset()
     } else {
       Alert.alert('Online, ga bisa submit')
