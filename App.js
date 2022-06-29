@@ -29,6 +29,12 @@ const App = () => {
   const { isOnline } = useNetwork()
 
   React.useEffect(() => {
+    refresh()
+  }, [])
+
+  const refresh = () => {
+    setRow([])
+    
     async function fetchPokemon() {
       const pokemons = await getPokemons();
       if (pokemons.data) {
@@ -73,7 +79,7 @@ const App = () => {
       fetchPokemon(),
       fetchPokemonCached()
     ])
-  }, [])
+  }
 
   const reset = () => {
     setType('')
@@ -113,6 +119,7 @@ const App = () => {
         )
       })}
 
+      <Button  title="refresh" onPress={refresh}/>
 
       <View style={{padding: 20}}>
         <TextInput value={name} onChangeText={setName} style={styles.txInput}/>
