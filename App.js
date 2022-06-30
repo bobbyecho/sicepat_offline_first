@@ -107,11 +107,12 @@ const App = () => {
                   console.log(collectionRef.doc(uuid()).get(), 'cache');
                 }
                 
-                collectionRef.doc(uuid).onSnapshot((snap) => {
-                  if (snap.metadata.fromCache) {
+                collectionRef.get({ source: 'cache' }).then((snap) => {
+                  if (!snap.metadata.hasPendingWrites) {
                     BackgroundActions.stop();
                   }
-                })
+                });
+
                 await sleep(delayInMs);
               }
           }
@@ -125,7 +126,7 @@ const App = () => {
               type: 'mipmap'
           },
           // linkingURI: getUriScheme, // See Deep Linking for more info
-          parameters: {delayInMs: 200000}
+          parameters: {delayInMs: 2000}
       }
   );
     if (!isOnline) {
