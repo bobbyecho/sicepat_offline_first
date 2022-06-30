@@ -30,10 +30,10 @@ export default class RNBackgroundActions {
                 taskTitle,
                 taskDesc,
                 taskIcon: {
-                    name: 'ic_launcher',
+                    name: 'ic_launcherx',
                     type: 'mipmap'
                 },
-                linkingURI: getUriScheme, // See Deep Linking for more info
+                // linkingURI: getUriScheme, // See Deep Linking for more info
                 parameters: {delayInMs: delay}
             }
         );

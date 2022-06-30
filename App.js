@@ -94,17 +94,12 @@ const App = () => {
       async (taskData) => {
           console.log('looping dulu 1', taskData)
           const { delayInMs } = taskData;
-          // await new Promise( async (resolve) => {
-          //     for (let i = 0; BackgroundService.isRunning(); i++) {
-          //         console.log(i);
-          //         await sleep(delay);
-          //     }
-          // });
+
           if (taskData) {
               console.log('looping dulu')
               while (BackgroundActions.isRunning()) {
                 if (isOnline) {
-                  console.log(collectionRef.doc(uuid()).get(), 'cache');
+                  collectionRef.doc(uuid()).get();
                 }
                 
                 collectionRef.get({ source: 'cache' }).then((snap) => {
@@ -131,12 +126,6 @@ const App = () => {
   );
     if (!isOnline) {
       console.log(BackgroundActions, 'tee');
-      try{
-
-        
-      } catch (e) {
-        console.log('kontol tai', e)
-      }
       collectionRef
           .doc(uuid())
           .set({
