@@ -57,7 +57,7 @@ const App = () => {
 
     async function fetchPokemonCached() {
       collectionRef
-        .where('is_synced', '==', false).onSnapshot(querySnapshot => {
+        .where('user_id', '==', '1010').onSnapshot(querySnapshot => {
         let snapshotData = []
 
         querySnapshot.forEach(documentSnapshot => {
@@ -79,7 +79,6 @@ const App = () => {
     }
 
     Promise.all([
-      fetchPokemon(),
       fetchPokemonCached()
     ])
   }
@@ -92,22 +91,15 @@ const App = () => {
   const onSubmit = async () => {
     await BackgroundActions.start(
       async (taskData) => {
-          console.log('looping dulu 1', taskData)
           const { delayInMs } = taskData;
 
           if (taskData) {
-              console.log('looping dulu')
               while (BackgroundActions.isRunning()) {
-                if (isOnline) {
-                  collectionRef.doc(uuid()).get();
-                }
-                
-                collectionRef.get({ source: 'cache' }).then((snap) => {
-                  if (!snap.metadata.hasPendingWrites) {
-                    BackgroundActions.stop();
-                  }
-                });
-
+                   await collectionRef.get({ source: 'cache' }).then((snap) => {
+                    if (snap.metadata.hasPendingWrites) {
+                      BackgroundActions.stop();
+                    }
+                   })
                 await sleep(delayInMs);
               }
           }
@@ -125,7 +117,6 @@ const App = () => {
       }
   );
     if (!isOnline) {
-      console.log(BackgroundActions, 'tee');
       collectionRef
           .doc(uuid())
           .set({
