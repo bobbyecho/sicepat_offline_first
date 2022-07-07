@@ -7,7 +7,4 @@ const axios = Axios.create({
 
 const axiosWithOffline = httpClientWithOfflineHandler(axios);
 
-export {
-  axios,
-  axiosWithOffline
-}
+export {axios, axiosWithOffline}
