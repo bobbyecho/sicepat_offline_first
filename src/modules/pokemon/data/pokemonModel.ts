@@ -1,4 +1,4 @@
-export interface PokemonFirestore {
+export interface PokemonOffline {
   id: string;
   is_synced: boolean;
   user_id: number;

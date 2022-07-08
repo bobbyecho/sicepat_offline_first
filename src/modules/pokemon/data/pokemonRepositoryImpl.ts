@@ -2,36 +2,20 @@ import { pokemonMapper } from "../dataMapper/pokemonMapper";
 import { Pokemon } from "../domain/pokemonEntity";
 import { PokemonRepository } from "../domain/pokemonRepository";
 import { axios } from "./http/axios";
-import { recoil } from "./store/recoil";
+import { firestore } from "./offline/firestore";
 
-export const usePokemonRepositoryImpl = (): PokemonRepository => {
-  const getPokemons = (userId: number): { loading: boolean; failure: boolean; done: boolean; data: Pokemon[]; } => {
-    let loading = false
-    let failure = false;
-    let done = false;
-    let data: Pokemon[] = [];
+export const pokemonRepositoryImpl = (): PokemonRepository => {
+  const getPokemons = async (userId: number): Promise<Pokemon[]> => {
 
-    const {state, contents} = recoil.getPokemons(async() => {
-      return await axios.getPokemons()
-    })
+    const [pokeFirestore, pokeHttp] = await Promise.all([
+      pokemonMapper.firestoreToEntities(await firestore.getPokemons(userId)),
+      pokemonMapper.httpToEntities(await axios.getPokemons(), userId)
+    ])
 
-    switch (state) {
-      case "loading":
-        loading = true
-        break;
-      case "hasError":
-        failure = true;
-        break;
-      case "hasValue":
-        data = pokemonMapper.toEntities(contents, userId)
-    }
-
-    return {
-      loading,
-      failure,
-      done,
-      data
-    }
+    return [
+      ...pokeFirestore,
+      ...pokeHttp
+    ]
   }
 
   return {

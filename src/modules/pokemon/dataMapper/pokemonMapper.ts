@@ -1,8 +1,8 @@
-import { PokemonFirestore, PokemonHttp } from "../data/pokemonModel";
-import { Pokemon } from "../domain/pokemonEntity";
+import { PokemonOffline, PokemonHttp } from "../data/pokemonModel";
+import { Pokemon } from "../domain/pokemonEntity"; 
 
 export const pokemonMapper = {
-  toEntity: ({id, payload, user_id}: PokemonFirestore): Pokemon => {
+  toEntity: ({id, payload, user_id}: PokemonOffline): Pokemon => {
     return {
       id,
       from: 'firestore',
@@ -11,7 +11,7 @@ export const pokemonMapper = {
       type: payload.type
     }
   },
-  toFirestore: ({id, name, type, userId}: Pokemon): PokemonFirestore => {
+  toFirestore: ({id, name, type, userId}: Pokemon): PokemonOffline => {
     return {
       id,
       is_synced: false,
@@ -22,7 +22,16 @@ export const pokemonMapper = {
       }
     }
   },
-  toEntities: (pokemons: PokemonHttp[], userId: number): Pokemon[] => {
+  firestoreToEntities: (pokemons: PokemonFirestore[]): Pokemon[] => {
+    return pokemons.map(({id, payload, user_id}) => ({
+      id,
+      from: 'firestore',
+      name: payload.name,
+      type: payload.type,
+      userId: user_id
+    }))
+  },
+  httpToEntities: (pokemons: PokemonHttp[], userId: number): Pokemon[] => {
     return pokemons
       .map(({id, name, type, user_id}) => ({
         id,
@@ -40,8 +49,5 @@ export const pokemonMapper = {
       type,
       user_id: userId
     }
-  },
-  filterByUserId: (pokemon: Pokemon, userId: number): boolean => {
-    return pokemon.userId === userId
   }
 }

@@ -1,12 +1,12 @@
 import { Firestore } from "../../../../../libs/liveData/firestore";
 import { Pokemon } from "../../../domain/pokemonEntity";
-import { PokemonRepository } from "../../../domain/pokemonRepository";
+import { PokemonOffline } from "../../pokemonModel";
 
 const OfflineInstance = Firestore.collection('offline');
 
 export const firestore = {
-  getPokemons: async (userId: string) => {
-    let snapshotData: Pokemon[] = []
+  getPokemons: async (userId: number) => {
+    let snapshotData: PokemonOffline[] = []
 
     OfflineInstance
       .where('is_synced', '==', false)
@@ -14,8 +14,13 @@ export const firestore = {
       .onSnapshot(querySnapshot => {
         querySnapshot.forEach(documentSnapshot => {
           snapshotData.push({
-            ...documentSnapshot,
-            from: 'firestore'
+            id: documentSnapshot.id,
+            is_synced: false,
+            user_id: documentSnapshot.data().user_id,
+            payload: {
+              name: documentSnapshot.data().payload.name,
+              type: documentSnapshot.data().payload.type,
+            }
           })
       })
     });
