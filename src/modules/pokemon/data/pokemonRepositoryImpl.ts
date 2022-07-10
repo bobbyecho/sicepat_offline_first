@@ -5,7 +5,7 @@ import { axios } from "./http/axios";
 import { firestore } from "./offline/firestore";
 
 export const pokemonRepositoryImpl = (): PokemonRepository => {
-  const getPokemons = async (userId: number): Promise<Pokemon[]> => {
+  const fetchPokemons = async (userId: number): Promise<Pokemon[]> => {
 
     const [pokeFirestore, pokeHttp] = await Promise.all([
       pokemonMapper.firestoreToEntities(await firestore.getPokemons(userId)),
@@ -18,8 +18,15 @@ export const pokemonRepositoryImpl = (): PokemonRepository => {
     ]
   }
 
+  const addPokemon = async (pokemon: Pokemon) => {
+    const resolvePokemonHttp = pokemonMapper.toHttp(pokemon) 
+    // ready to release pokemon to http
+  }
+  
+
   return {
-    getPokemons
+    fetchPokemons,
+    addPokemon
   }
 }
 

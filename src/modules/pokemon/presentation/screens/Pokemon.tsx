@@ -1,16 +1,20 @@
 import React from 'react';
-import { ScrollView, ScrollViewBase, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { usePokemon } from '../../application/usePokemon';
 
 const userId = 1001;
 
 const Pokemon = () => {
-  const {getPokemons} = usePokemon();
-  const {data, done, failure, loading} = getPokemons(1001);
+  const {fetchPokemons, Pokemons} = usePokemon();
+  const pokemons = Pokemons();
+  
+  React.useEffect(() => {
+    fetchPokemons(1001)
+  }, [])
 
-  return data && !loading ? (
+  return pokemons.length ? (
     <ScrollView>
-        {data.map((item) => {
+        {pokemons.map((item) => {
           return (
             <View key={item.id} style={{margin: 10, padding: 10, borderWidth: 1, borderRadius: 4, borderColor: item.from === 'database' ? 'blue' : 'red'}}>
               <Text style={{color: 'black'}}>id: {item.id}</Text>

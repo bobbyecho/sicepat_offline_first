@@ -22,7 +22,7 @@ export const pokemonMapper = {
       }
     }
   },
-  firestoreToEntities: (pokemons: PokemonFirestore[]): Pokemon[] => {
+  firestoreToEntities: (pokemons: PokemonOffline[]): Pokemon[] => {
     return pokemons.map(({id, payload, user_id}) => ({
       id,
       from: 'firestore',
