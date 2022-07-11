@@ -13,11 +13,16 @@
     "@react-native-community/netinfo": "^9.3.0",
     "@react-native-firebase/app": "12.9.3",
     "@react-native-firebase/firestore": "12.9.3",
+    "@react-native-firebase/storage": "12.9.3",
     "axios": "^0.27.2",
     "react": "18.0.0",
     "react-native": "0.69.0",
     "react-native-background-actions": "^2.6.7",
+    "react-native-camera": "^4.2.1",
+    "react-native-fs": "^2.20.0",
     "react-native-get-random-values": "^1.8.0",
+    "react-native-image-resizer": "^1.4.5",
+    "react-native-vision-camera": "^2.13.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

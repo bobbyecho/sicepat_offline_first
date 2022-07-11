@@ -12,10 +12,15 @@ import {
   Button,
   StyleSheet,
   Text,
-  TextInput,
   View,
+  Image
 } from 'react-native';
+import { utils } from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import resizer from 'react-native-image-resizer';
+import RNFS from 'react-native-fs';
+import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import {v4 as uuid} from 'uuid';
 import { getPokemons } from './axios';
 import { mapper } from './mapper';
@@ -28,8 +33,15 @@ const App = () => {
   const [row, setRow] =  React.useState([])
   const [name, setName] = React.useState('')
   const [type, setType] = React.useState('')
+  const [imageData, setImageData] = React.useState(null);
   const collectionRef = React.useRef(firestore().collection('offline')).current
   const { isOnline } = useNetwork()
+  const cameraRef = React.createRef<Camera>();
+
+
+
+  const devices = useCameraDevices();
+  const device = devices.back;
 
   React.useEffect(() => {
     refresh()
@@ -135,10 +147,62 @@ const App = () => {
       Alert.alert('Online, ga bisa submit')
     }
   }
+  
+  const takePhoto = async () => {
+    const options = {
+      quality: 1,
+      exif: false,
+      pauseAfterCapture: true,
+      base64: false,
+      fixOrientation: true,
+      forceUpOrientation: true,
+    };
 
-  return (
+    try {
+      const data = await cameraRef.current?.takePhoto(options);
+
+      if (data) {
+        const responseResize = await resizer.createResizedImage(data.path, 750, 750, 'JPEG', 80);
+        console.log(responseResize.uri, 'uri');
+        const base64 = await RNFS.readFile(responseResize.uri.substring(7), "base64");
+        console.log('dapet base64', base64);
+        const blob = firestore.Blob.fromBase64String(base64);
+        collectionRef.doc(uuid()).set({
+          is_synced: false,
+          user_id: '33334',
+          payload: {
+            name: 'Bob test',
+            type: 'testing bobby',
+            image: blob
+          }
+        });
+        // console.log(result, blob.buffer, 'WEEWWWW');
+
+        // console.log('checking', url);
+      }
+    } catch (e) {
+      // if (enableConsole) {
+        console.log('camera error: ', e);
+      // }
+    }
+  }
+  
+  const testingGetImage = async () => {
+    const testValue = await collectionRef.doc('a1c6cbef-eb07-492e-8f22-cbe4f60f138e').get();
+    console.log(testValue.data().payload.image.toBase64());
+    setImageData(`data:image/jpg;base64,${testValue.data().payload.image.toBase64()}`);
+  }
+
+  if (device == null || imageData !== null) return (
     <View>
-      {row.map((item) => {
+      <Text>loading</Text>
+      <Image source={{uri: imageData}} style={{width: '100%', height: '100%'}} />
+      <Button title="Testing" onPress={testingGetImage} />
+    </View>
+  );
+  return (
+    <View style={{flex: 1}}>
+      {/* {row.map((item) => {
         return (
           <View key={item.id} style={{margin: 10, padding: 10, borderWidth: 1, borderRadius: 4, borderColor: 'blue'}}>
             <Text style={{color: 'black'}}>name: {item.name}</Text>
@@ -153,8 +217,11 @@ const App = () => {
       <View style={{padding: 20}}>
         <TextInput value={name} onChangeText={setName} style={styles.txInput}/>
         <TextInput value={type} onChangeText={setType} style={styles.txInput}/>
-        <Button title='add new pokemon' onPress={onSubmit}/>
-      </View>
+        <Button title='add new pokemon' onPress={onSubmit}/> */}
+        <Camera ref={cameraRef} style={{flex: 1}} device={device} isActive={true} photo={true} />
+        <Button title='add upload photo' onPress={takePhoto}/>
+        <Button title='tes' onPress={testingGetImage}/>
+      {/* </View> */}
     </View>
   )
 };
